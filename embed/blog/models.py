@@ -16,11 +16,18 @@ class Post(BaseModel):
     content = models.CharField(
         max_length=1000,
     )
+    author = models.ForeignKey(
+            BaseUser, 
+            on_delete=models.SET_NULL,
+            null=True,
+    )
 
     def __str__(self):
-        return self.title
+        return self.slug
 
 class Subscription(models.Model):
     subscriber = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="subs")
     target     = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="targets")
 
+    def __str__(self):
+        return f"{self.subscriber.username} - {self.target.username}"
