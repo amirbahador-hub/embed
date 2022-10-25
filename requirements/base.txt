@@ -18,3 +18,6 @@ drf-jwt==1.19.2
 
 boto3==1.24.71
 attrs==22.1.0
+
+djangorestframework-simplejwt==5.2.2
+drf-spectacular==0.24.2

@@ -1,45 +1,30 @@
 from django.urls import path, include
 
 from .apis import (
-    UserSessionLoginApi,
-    UserSessionLogoutApi,
-
-    UserJwtLoginApi,
-    UserJwtLogoutApi,
-
     UserMeApi,
 )
 
-urlpatterns = [
-    path(
-        'session/',
-        include(([
-            path(
-                'login/',
-                UserSessionLoginApi.as_view(),
-                name='login'
-            ),
-            path(
-                'logout/',
-                UserSessionLogoutApi.as_view(),
-                name='logout'
-            )
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView 
 
-        ], "session"))
-    ),
+urlpatterns = [
     path(
         'jwt/',
         include(([
             path(
                 "login/",
-                UserJwtLoginApi.as_view(),
+                TokenObtainPairView.as_view(),
                 name="login"
             ),
             path(
-                "logout/",
-                UserJwtLogoutApi.as_view(),
-                name="logout"
-            )
+                "refresh/",
+                TokenRefreshView.as_view(),
+                name="token_refresh"
+            ),
+            path(
+                "verify/",
+                TokenVerifyView.as_view(),
+                name="token_verify"
+            ),
         ], "jwt"))
     ),
     path(
@@ -48,3 +33,4 @@ urlpatterns = [
         name='me'
     )
 ]
+
