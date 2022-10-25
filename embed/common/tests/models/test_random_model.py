@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.db.utils import IntegrityError
 
-from styleguide_example.common.models import RandomModel
+from embed.common.models import RandomModel
 
 
 class RandomModelTests(TestCase):

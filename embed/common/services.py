@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Tuple
 
-from styleguide_example.common.types import DjangoModelType
+from embed.common.types import DjangoModelType
 
 
 def model_update(
