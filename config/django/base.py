@@ -18,6 +18,7 @@ ALLOWED_HOSTS = ['*']
 LOCAL_APPS = [
     'embed.core.apps.CoreConfig',
     'embed.common.apps.CommonConfig',
+    'embed.blog.apps.BlogConfig',
     #'embed.docs.apps.DocsConfig',
     #'embed.tasks.apps.TasksConfig',
     'embed.api.apps.ApiConfig',
