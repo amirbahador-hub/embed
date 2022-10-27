@@ -11,12 +11,30 @@ import jwt
 
 from embed.api.pagination import get_paginated_response, LimitOffsetPagination
 
-from embed.users.selectors import user_list
+from embed.users.selectors import user_list, get_profile
 from embed.users.services import register
-from embed.users.models import BaseUser
+from embed.users.models import BaseUser, Profile
 from embed.users.validators import integer_validator, alphabet_validator, special_characters_validator
 
 
+class ProfileApi(APIView):
+
+    class OutPutProfileSerializer(serializers.ModelSerializer):
+
+        user = serializers.SerializerMethodField("get_user")
+
+        class Meta:
+            model = Profile 
+            fields = ("bio", "posts_count", "subscriptions_count", "subscribers_count", "user")
+
+        def get_user(self, profile):
+            return profile.user.username
+
+    def get(self, request):
+        query = get_profile(user=request.user)
+        serializer = self.OutPutProfileSerializer(query)
+        return Response(serializer.data)
+ 
 class RegisterApi(APIView):
 
     class OutPutRegisterSerializer(serializers.ModelSerializer):
@@ -77,37 +95,3 @@ class RegisterApi(APIView):
         serializer_output = self.OutPutRegisterSerializer(user)
         return Response(serializer_output.data)
 
-
-class UserListApi(APIView):
-    class Pagination(LimitOffsetPagination):
-        default_limit = 1
-
-    class FilterSerializer(serializers.Serializer):
-        id = serializers.IntegerField(required=False)
-        # Important: If we use BooleanField, it will default to False
-        is_admin = serializers.NullBooleanField(required=False)
-        email = serializers.EmailField(required=False)
-
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = BaseUser
-            fields = (
-                'id',
-                'email',
-                'is_admin'
-            )
-
-    def get(self, request):
-        # Make sure the filters are valid, if passed
-        filters_serializer = self.FilterSerializer(data=request.query_params)
-        filters_serializer.is_valid(raise_exception=True)
-
-        users = user_list(filters=filters_serializer.validated_data)
-
-        return get_paginated_response(
-            pagination_class=self.Pagination,
-            serializer_class=self.OutputSerializer,
-            queryset=users,
-            request=request,
-            view=self
-        )

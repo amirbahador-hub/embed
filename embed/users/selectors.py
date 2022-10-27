@@ -1,8 +1,11 @@
 from django.db.models.query import QuerySet
 
-from embed.users.models import BaseUser
+from embed.users.models import BaseUser, Profile
 from embed.users.filters import BaseUserFilter
 
+
+def get_profile(*, user:BaseUser) -> QuerySet[Profile]:
+    return Profile.objects.get(user=user)
 
 def user_get_login_data(*, user: BaseUser):
     return {
