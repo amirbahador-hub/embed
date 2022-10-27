@@ -33,10 +33,10 @@ class SubscribeApi(ApiAuthMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
-    class InputSerializer(serializers.Serializer):
+    class InputSubSerializer(serializers.Serializer):
         username = serializers.CharField(max_length=100)
 
-    class OutPutSerializer(serializers.ModelSerializer):
+    class OutPutSubSerializer(serializers.ModelSerializer):
         username = serializers.SerializerMethodField("get_username")
 
         class Meta:
@@ -48,7 +48,7 @@ class SubscribeApi(ApiAuthMixin, APIView):
 
 
     @extend_schema(
-        responses=OutPutSerializer,
+        responses=OutPutSubSerializer,
     )
     def get(self, request):
         user = request.user
@@ -57,16 +57,16 @@ class SubscribeApi(ApiAuthMixin, APIView):
                 request=request,
                 pagination_class=self.Pagination,
                 queryset=query,
-                serializer_class=self.OutPutSerializer,
+                serializer_class=self.OutPutSubSerializer,
                 view=self,
                 ) 
 
     @extend_schema(
-        request=InputSerializer,
-        responses=OutPutSerializer,
+        request=InputSubSerializer,
+        responses=OutPutSubSerializer,
     )
     def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
+        serializer = self.InputSubSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             query = subscribe(user=request.user, username=serializer.validated_data.get("username"))
@@ -76,6 +76,6 @@ class SubscribeApi(ApiAuthMixin, APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        output_serilaizer = self.OutPutSerializer(query)
+        output_serilaizer = self.OutPutSubSerializer(query)
         return Response(output_serilaizer.data)
 
