@@ -1,10 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import AccessToken
 
 from drf_spectacular.utils import extend_schema
 
 from django.core.validators import MinLengthValidator 
+from django.conf import settings
+import jwt
 
 from embed.api.pagination import get_paginated_response, LimitOffsetPagination
 
@@ -17,9 +20,19 @@ from embed.users.validators import integer_validator, alphabet_validator, specia
 class RegisterApi(APIView):
 
     class OutPutRegisterSerializer(serializers.ModelSerializer):
+
+        token = serializers.SerializerMethodField("get_token")
         class Meta:
             model = BaseUser
-            fields = ("email", "username")
+            fields = ("email", "username", "token")
+
+        def get_token(self, user):
+            decode = AccessToken.for_user(user)
+            decode_dict = {"iat":decode["iat"], "jti":decode["jti"], "user_id":decode["user_id"],
+                    "exp":decode["exp"], "token_type":decode["token_type"]}
+            encoded = jwt.encode(decode_dict, settings.SECRET_KEY, algorithm="HS256")
+            return encoded
+
 
     class InputRegisterSerializer(serializers.Serializer):
 
