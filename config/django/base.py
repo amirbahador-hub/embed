@@ -160,6 +160,43 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': []
 }
 
+
+# ElasticSearch configuration
+ES_ACTIVE = True
+ES_HOST = env("ES_HOST")
+ES_AUTH = env("ES_AUTH")
+ES_PRODUCTS_INDEX = "posts"
+ES_INDEX = ES_PRODUCTS_INDEX
+ES_INDEX_SETTINGS = {
+    'number_of_shards': 1,
+    'number_of_replicas': 0,
+}
+
+ES_CONNECTIONS = {
+    'default': {
+        'hosts': [
+            {
+                'host': ES_HOST,
+                'http_auth': ES_AUTH,
+                'verify_certs': False,
+                'port': env("ES_PORT"),
+            }
+        ]
+    }
+}
+
+
+# Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': env("REDIS_LOCATION"),
+    }
+}
+# Cache time to live is 15 minutes.
+CACHE_TTL = 60 * 15
+
+
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
