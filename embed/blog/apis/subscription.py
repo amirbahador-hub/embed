@@ -18,14 +18,14 @@ class SubscribeDetailApi(ApiAuthMixin, APIView):
     def delete(self, request, username):
 
         try:
-            query = unsubscribe(user=request.user, username=username)
+            unsubscribe(user=request.user, username=username)
         except Exception as ex:
             return Response(
                 {"detail": "Database Error - " + str(ex)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return Response(query, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscribeApi(ApiAuthMixin, APIView):
