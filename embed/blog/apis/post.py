@@ -17,6 +17,14 @@ class PostApi(ApiAuthMixin, APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
+    class FilterSerializer(serializers.Serializer):
+        title = serializers.CharField(required=False, max_length=100)
+        search = serializers.CharField(required=False, max_length=100)
+        created_at__range= serializers.CharField(required=False, max_length=100)
+        author__in= serializers.CharField(required=False, max_length=100)
+        slug = serializers.CharField(required=False, max_length=100)
+        content = serializers.CharField(required=False, max_length=1000)
+
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField(max_length=1000)
         title = serializers.CharField(max_length=100)
@@ -26,7 +34,7 @@ class PostApi(ApiAuthMixin, APIView):
 
         class Meta:
             model = Post
-            fields = ("author", "title", "content", "created_at", "updated_at")
+            fields = ("author", "slug", "title", "content", "created_at", "updated_at")
 
         def get_author(self, post):
             return post.author.username
@@ -52,10 +60,21 @@ class PostApi(ApiAuthMixin, APIView):
         return Response(self.OutPutSerializer(query).data)
 
     @extend_schema(
+        parameters=[FilterSerializer],
         responses=OutPutSerializer,
     )
     def get(self, request):
-        query = post_list(user=request.user)
+        filters_serializer = self.FilterSerializer(data=request.query_params)
+        filters_serializer.is_valid(raise_exception=True)
+
+        try:
+            query = post_list(filters=filters_serializer.validated_data, user=request.user)
+        except Exception as ex:
+            return Response(
+                {"detail": "Filter Error - " + str(ex)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         return get_paginated_response(
             pagination_class=self.Pagination,
             serializer_class=self.OutPutSerializer,
