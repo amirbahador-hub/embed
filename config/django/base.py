@@ -19,15 +19,8 @@ LOCAL_APPS = [
     'embed.core.apps.CoreConfig',
     'embed.common.apps.CommonConfig',
     'embed.blog.apps.BlogConfig',
-    #'embed.docs.apps.DocsConfig',
-    #'embed.tasks.apps.TasksConfig',
     'embed.api.apps.ApiConfig',
     'embed.users.apps.UsersConfig',
-    #'embed.errors.apps.ErrorsConfig',
-    #'embed.testing_examples.apps.TestingExamplesConfig',
-    #'embed.integrations.apps.IntegrationsConfig',
-    #'embed.files.apps.FilesConfig',
-    #'embed.emails.apps.EmailsConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -158,31 +151,6 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': []
-}
-
-
-# ElasticSearch configuration
-ES_ACTIVE = True
-ES_HOST = env("ES_HOST")
-ES_AUTH = env("ES_AUTH")
-ES_PRODUCTS_INDEX = "posts"
-ES_INDEX = ES_PRODUCTS_INDEX
-ES_INDEX_SETTINGS = {
-    'number_of_shards': 1,
-    'number_of_replicas': 0,
-}
-
-ES_CONNECTIONS = {
-    'default': {
-        'hosts': [
-            {
-                'host': ES_HOST,
-                'http_auth': ES_AUTH,
-                'verify_certs': False,
-                'port': env("ES_PORT"),
-            }
-        ]
-    }
 }
 
 
