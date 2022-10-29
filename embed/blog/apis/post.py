@@ -4,11 +4,13 @@ from rest_framework import serializers
 from rest_framework import status
 
 from drf_spectacular.utils import extend_schema
+from django.urls import reverse
 
-from embed.api.pagination import get_paginated_response, LimitOffsetPagination
+from embed.api.pagination import  get_paginated_response, LimitOffsetPagination, get_paginated_response_context
+from rest_framework.pagination import PageNumberPagination
 
 from embed.blog.models import Post 
-from embed.blog.selectors.posts import post_list 
+from embed.blog.selectors.posts import post_detail, post_list 
 from embed.blog.services.post import create_post 
 from embed.api.mixins import ApiAuthMixin
 
@@ -31,13 +33,19 @@ class PostApi(ApiAuthMixin, APIView):
 
     class OutPutSerializer(serializers.ModelSerializer):
         author = serializers.SerializerMethodField("get_author")
+        url = serializers.SerializerMethodField("get_url")
 
         class Meta:
             model = Post
-            fields = ("author", "slug", "title", "content", "created_at", "updated_at")
+            fields = ("url", "title", "author")
 
         def get_author(self, post):
             return post.author.username
+
+        def get_url(self, post):
+            request = self.context.get("request")
+            path = reverse("api:blog:post_detail", args=(post.slug,))
+            return request.build_absolute_uri(path)
 
     @extend_schema(
         responses=OutPutSerializer,
@@ -57,7 +65,7 @@ class PostApi(ApiAuthMixin, APIView):
                 {"detail": "Database Error - " + str(ex)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(self.OutPutSerializer(query).data)
+        return Response(self.OutPutSerializer(query, context={"request":request}).data)
 
     @extend_schema(
         parameters=[FilterSerializer],
@@ -75,10 +83,43 @@ class PostApi(ApiAuthMixin, APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return get_paginated_response(
+        return get_paginated_response_context(
             pagination_class=self.Pagination,
             serializer_class=self.OutPutSerializer,
             queryset=query,
             request=request,
             view=self,
         )
+
+
+class PostDetailApi(ApiAuthMixin, APIView):
+    class Pagination(LimitOffsetPagination):
+        default_limit = 10
+
+    class OutPutDetailSerializer(serializers.ModelSerializer):
+        author = serializers.SerializerMethodField("get_author")
+
+        class Meta:
+            model = Post
+            fields = ("author", "slug", "title", "content", "created_at", "updated_at")
+
+        def get_author(self, post):
+            return post.author.username
+
+
+    @extend_schema(
+        responses=OutPutDetailSerializer,
+    )
+    def get(self, request, slug):
+
+        try:
+            query = post_detail(slug=slug, user=request.user)
+        except Exception as ex:
+            return Response(
+                {"detail": "Filter Error - " + str(ex)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.OutPutDetailSerializer(query)
+
+        return Response(serializer.data) 
