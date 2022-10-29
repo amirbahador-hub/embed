@@ -1,6 +1,6 @@
 import factory
 
-from tests.utils import faker
+from embed.tests.utils import faker
 from embed.users.models import (
         BaseUser,
         Profile,
@@ -34,15 +34,15 @@ class PostFactory(factory.django.DjangoModelFactory):
     title   = factory.LazyAttribute(lambda _: f'{faker.unique.company()}')
     content = factory.LazyAttribute(lambda _: f'{faker.unique.company()}')
     slug    = factory.LazyAttribute(lambda _: f'{faker.unique.company()}')
-    user    = factory.SubFactory(BaseUserFactory)
+    created_at           = factory.LazyAttribute(lambda _: f'{timezone.now()}')
+    updated_at           = factory.LazyAttribute(lambda _: f'{timezone.now()}')
+    author = factory.SubFactory(BaseUserFactory)
 
 class ProfileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Profile
 
     user                 = factory.SubFactory(BaseUserFactory)
-    created_at           = factory.LazyAttribute(lambda _: f'{timezone.now()}')
-    updated_at           = factory.LazyAttribute(lambda _: f'{timezone.now()}')
     posts_count          = factory.LazyAttribute(lambda _: 0 )
     subscriptions_count  = factory.LazyAttribute(lambda _: 0 )
     subscribers_count    = factory.LazyAttribute(lambda _: 0 )

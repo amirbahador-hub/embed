@@ -1,6 +1,6 @@
 import pytest
 
-from tests.factories import (
+from embed.tests.factories import (
         BaseUserFactory,
         ProfileFactory,
         SubscriptionFactory,
@@ -21,8 +21,8 @@ def profile1(user1):
 
 
 @pytest.fixture
-def subsctiption1(user1, user2):
-    return SubscriptionFactory(target=user1, subscription=user2)
+def subscription1(user1, user2):
+    return SubscriptionFactory(target=user1, subscriber=user2)
 
 
 @pytest.fixture
