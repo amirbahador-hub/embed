@@ -20,29 +20,8 @@ services:
     volumes:
       - redis-data:/data
 
-  elasticsearch:
-    image: elasticsearch:8.4.3
-    container_name: elasticsearch
-    ports:
-      - 9200:9200
-    environment:
-      - node.name=embed-es
-      - cluster.name=embed-es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-
 
 volumes:
     postgres-data:
-    elasticsearch-data:
     redis-data:
 
