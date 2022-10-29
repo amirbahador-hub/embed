@@ -21,6 +21,7 @@ LOCAL_APPS = [
     'embed.blog.apps.BlogConfig',
     'embed.api.apps.ApiConfig',
     'embed.users.apps.UsersConfig',
+    'embed.tasks.apps.TasksConfig',
 ]
 
 THIRD_PARTY_APPS = [
