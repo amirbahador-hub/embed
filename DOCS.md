@@ -1,44 +1,15 @@
-## Getting Started
-there is a swagger document on     
+## install requirements
 ```
-http://localhost:8000
-```
-
-## complex queries
-
-### login
-POST /api/auth/jwt/login/
-```
-{
-  "username": "bita",
-  "password": "8125687g@"
-}
-```
-and then copy access token and past it on Authorize
-botton on the top of the swagger ui
-or on curl
-```
-curl -X 'GET' \
-  'http://localhost:8000/api/blog/post/?search=foo' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer access_token'
+pip install requirements.txt
 ```
 
-### get posts
-Get /api/blog/post/
-
-created_at
-```
-?created_at__range=2022-10-27,2022-10-27
+## RUN TESTS
+```bash
+pytest . -rP
 ```
 
-authors
-```
-?author__in=admin,amirbahador
-```
-
-full_text_search
-```
-?search=foo
-```
-
+## Description
+the main codes are on embed/blog and embed/authorization
+models.py are database models
+services and selectors are were business logic exist
+apis.py are views and serializers

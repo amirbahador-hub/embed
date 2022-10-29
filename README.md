@@ -5,6 +5,10 @@
 https://www.embed.xyz/ assignment
 
 ## RUN IN DEVELOPMENT MODE
+install dev requirements
+```
+pip install requirements.txt
+```
 Add ENV_NAME KEY to .env
 ```
 DATABASE_URL=psql://postgres:postgres@127.0.0.1:5432/embed_db
