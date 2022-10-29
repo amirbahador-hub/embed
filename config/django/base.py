@@ -159,7 +159,7 @@ REST_FRAMEWORK = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': env("REDIS_LOCATION", "redis://localhost:6379"),
+        'LOCATION': env("REDIS_LOCATION"),
     }
 }
 # Cache time to live is 15 minutes.
