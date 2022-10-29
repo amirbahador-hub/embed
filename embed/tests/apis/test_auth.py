@@ -15,6 +15,14 @@ def test_unauth_post_api(user1, subscription1, profile1, post1):
 
     assert response.status_code == 401
 
+@pytest.mark.django_db
+def test_auth_api(api_client, user1, subscription1, profile1, post1):
+    url_ = reverse("api:blog:post")
+            
+    response = api_client.get(url_, content_type='application/json')
+
+    assert response.status_code 200
+
 
 @pytest.mark.django_db
 def test_login(user1, subscription1, profile1, post1):
