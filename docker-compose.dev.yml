@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data/
 
-   rabbitmq:
+  rabbitmq:
     image: "rabbitmq:alpine"
 
     healthcheck:
